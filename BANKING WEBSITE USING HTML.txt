@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Banking App</title>
+  <style>
+    /* CSS code */
+
+    /* ... */
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Banking App</h1>
+    
+    <a href="customers.php" class="button">View All Customers</a>
+  </div>
+</body>
+</html>
+
+<?php
+// ... Database connection code ...
+
+// Retrieve all customers from the database
+$stmt = $conn->query("SELECT * FROM customers");
+$customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Banking App</title>
+  <style>
+    /* CSS code */
+
+    /* ... */
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Banking App</h1>
+    
+    <h2>All Customers</h2>
+    <ul class="customer-list">
+      <?php foreach ($customers as $customer): ?>
+      <li>
+        <a href="view_customer.php?id=<?php echo $customer['id']; ?>">
+          <?php echo $customer['name']; ?>
+        </a>
+      </li>
+      <?php endforeach; ?>
+    </ul>
+    
+    <a href="index.html" class="button">Go Back</a>
+  </div>
+</body>
+</html>
+
+<?php
+// ... Database connection code ...
+
+// Get the customer ID from the query string parameter
+$customerId = $_GET['id'];
+
+// Retrieve the customer details from the database
+$stmt = $conn->prepare("SELECT * FROM customers WHERE id = :id");
+$stmt->bindParam(':id', $customerId);
+$stmt->execute();
+$customer = $stmt->fetch(PDO::FETCH_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Banking App</title>
+  <style>
+    /* CSS code */
+
+    /* ... */
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Banking App</h1>
+    
+    <div class="customer-details">
+      <h2>Customer Details</h2>
+      <p><strong>Name:</strong> <?php echo $customer['name']; ?></p>
+      <p><strong>Email:</strong> <?php echo $customer['email']; ?></p>
+      <p><strong>Account Number:</strong> <?php echo $customer['account_number']; ?></p>
+      <p><strong>Balance:</strong> <?php echo $customer['balance']; ?></p>
+    </div>
+    
+    <a href="customers.php" class="button">Go Back</a>
+    <a href="transfer.php?sender=<?php echo $customer['id']; ?>" class="button">Transfer Money</a>
+  </div>
+</body>
+</html>
+
+<?php
+// ... Database connection code ...
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Get the transfer details from the form data
+  $senderId = $_POST['senderId'];
+  $recipientId = $_POST['recipientId'];
+  $amount = $_POST['amount'];
+
+  // Retrieve the sender and recipient details from the database
+  $stmt = $conn->prepare("SELECT * FROM customers WHERE id = :sender_id OR id = :recipient_id");
+  $stmt->bindParam(':sender_id', $senderId);
+  $stmt->bindParam
